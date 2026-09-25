@@ -1,6 +1,7 @@
-#Oracle Databse Lab (Training Edition --- Academic Version)
+# Oracle Databse Lab (Training Edition --- Academic Version)
 
 Training repository for Oracle Database administration, testing, change management and Git workflows.
 Name: Carlos Parra Camacho
 Professor: Richard Aviles Lopez
-test
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
