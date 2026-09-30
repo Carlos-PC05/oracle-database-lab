@@ -1,0 +1,31 @@
+
+Session altered.
+
+
+Tablespace created.
+
+
+User created.
+
+
+Grant succeeded.
+
+
+Tablespace created.
+
+
+User created.
+
+
+Grant succeeded.
+
+
+Tablespace created.
+
+50
+*
+ERROR at line 2:
+ORA-00922: missing or invalid option
+Help: https://docs.oracle.com/error-help/db/ora-00922/
+
+
