@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # scripts/deployment/env/05-crear-contenedor.sh
-55
 set -euo pipefail
 source scripts/deployment/env/00-config.sh
 set -a; source config/.env; set +a
