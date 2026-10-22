@@ -6,6 +6,8 @@
 export CONT_NAME="oralab-26ai"
 export VOL_NAME="oralab-26ai-data"
 export IMG="container-registry.oracle.com/database/free:latest"
+export DATA_ROOT="/opt/oracle/oradata"	# punto de montaje del volumen dentro del contenedor
+export HELPER_IMG="$IMG"	# imagen con tar para copiar/restaurar el volumen fuera del contenedor
 export PORT_DB=1521
 export PORT_ORDS=8181
 export SERVICE_CDB="FREE"
