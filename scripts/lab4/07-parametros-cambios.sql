@@ -1,5 +1,5 @@
 -- scripts/lab4/07-parametros-cambios.sql — SCOPE=MEMORY|SPFILE|BOTH, estáticos, RESET, nivel PDB y PFILE
--- Ejecutar: bash scripts/ops/sysdba.sh <este archivo>; para guardar la salida, envuélvelo con `script`.
+-- Ejecutar: bash scripts/ops/sysdba.sh <este archivo> [archivo.log].
 -- Deja la instancia EXACTAMENTE como estaba (cada cambio se deshace al final de su bloque).
 WHENEVER SQLERROR CONTINUE
 SET LINESIZE 160 PAGESIZE 100 FEEDBACK OFF

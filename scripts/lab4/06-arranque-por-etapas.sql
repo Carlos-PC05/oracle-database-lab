@@ -1,5 +1,5 @@
 -- scripts/lab4/06-arranque-por-etapas.sql — parada y arranque etapa a etapa (SHUTDOWN → NOMOUNT → MOUNT → OPEN)
--- Se ejecuta como SYSDBA con autenticación del SO: bash scripts/ops/sysdba.sh <este archivo>
+-- Ejecutar como SYSDBA: bash scripts/ops/sysdba.sh <este archivo> [archivo.log].
 -- Los errores ORA-01507 y ORA-01219 son ESPERADOS: demuestran qué existe en cada etapa.
 WHENEVER SQLERROR CONTINUE
 SET LINESIZE 160 PAGESIZE 100 FEEDBACK OFF ECHO OFF
