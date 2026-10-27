@@ -3,9 +3,10 @@
 # Uso: bash scripts/ops/restaurar-estado.sh <carpeta-de-la-copia> [--si]
 set -euo pipefail
 source scripts/deployment/env/00-config.sh
+docker info > /dev/null 2>&1 || { echo "ERROR: Docker no responde (¿está arrancado Docker Desktop o el servicio docker?). No se ha tocado nada." >&2; exit 1; }
 
 ORIGEN="${1:?Uso: restaurar-estado.sh <carpeta en backups/> [--si]}"
-ORIGEN="$(cd "$ORIGEN" && pwd)"	# ruta absoluta: docker -v la exige
+ORIGEN="$(cd "$ORIGEN" && pwd)"          # ruta absoluta: docker -v la exige
 CONFIRMAR="${2:-}"
 
 echo "== 1. Integridad de la copia (SHA-256) =="
@@ -34,7 +35,7 @@ fi
 
 echo "== 4. Restauración del volumen =="
 docker volume create "$VOL_NAME" > /dev/null
-docker run --rm --user 0:0 -v "$VOL_NAME":/destino -v "$ORIGEN":/origen:ro "$HELPER_IMG" \
+docker run --rm -v "$VOL_NAME":/destino -v "$ORIGEN":/origen:ro "$HELPER_IMG" \
   sh -c 'find /destino -mindepth 1 -delete && tar --numeric-owner -xzpf /origen/volumen.tar.gz -C /destino'
 
 if [ "$RECREAR" = "si" ]; then
@@ -46,10 +47,10 @@ echo "== 5. Archivos fuera del volumen =="
 if [ -s "$ORIGEN/extras/mapa.txt" ]; then
   while IFS='|' read -r tarfile ruta; do
     gunzip -c "$ORIGEN/extras/$tarfile" | docker cp -a - "$CONT_NAME:$(dirname "$ruta")"
-    echo " restaurado $ruta"
+    echo "  restaurado $ruta"
   done < "$ORIGEN/extras/mapa.txt"
 else
-  echo " ninguno"
+  echo "  ninguno"
 fi
 
 echo "== 6. Arranque y verificación =="
@@ -62,7 +63,7 @@ SELECT instance_name, status FROM v$instance;
 SELECT name, open_mode, log_mode FROM v$database;
 SELECT name, open_mode FROM v$pdbs;
 SELECT owner, COUNT(*) AS tablas FROM cdb_tables
-WHERE owner LIKE 'ADMIN\_%' ESCAPE '\' GROUP BY owner ORDER BY owner;
+ WHERE owner LIKE 'ADMIN\_%' ESCAPE '\' GROUP BY owner ORDER BY owner;
 EXIT
 SQL
 echo "== Restauración terminada: estado de «$(grep '^etiqueta=' "$ORIGEN/manifiesto.txt" | cut -d= -f2)» =="
