@@ -1,0 +1,18 @@
+
+===== Escenario: hoy =====
+
+INDICES_EN_PEDIDO INDICES
+----------------- --------------------------------------------------------------------------------------------------------------
+                2 IX_PED_CLIENTE, PK_PEDIDO
+hoy: 2000 INSERT               filas=  2000  lecturas logicas=  18221  bloques modificados= 12121  redo=  1574 KB    84.9 ms  | por fila: 6.1 bloques, 806 bytes de redo
+hoy: 2000 UPDATE estado        filas=  2000  lecturas logicas=  11729  bloques modificados=  4066  redo=   444 KB    40.2 ms  | por fila: 2 bloques, 227 bytes de redo
+hoy: 2000 UPDATE importe       filas=  2000  lecturas logicas=  11772  bloques modificados=  6500  redo=   788 KB    59.6 ms  | por fila: 3.3 bloques, 403 bytes de redo
+hoy: 2000 DELETE               filas=  2000  lecturas logicas=  21759  bloques modificados= 14881  redo=  1822 KB    82.4 ms  | por fila: 7.4 bloques, 933 bytes de redo
+BEGIN
+*
+ERROR at line 1:
+ORA-01418: specified index does not exist
+ORA-06512: at line 6
+Help: https://docs.oracle.com/error-help/db/ora-01418/
+
+

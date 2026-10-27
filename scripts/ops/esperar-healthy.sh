@@ -10,11 +10,11 @@ SONDA="SELECT d.open_mode || '/' || p.open_mode FROM v\$database d, v\$pdbs p WH
 for ((t = 0; t <= MAX; t += 10)); do
   salud=$(docker inspect -f "$FMT" "$CONT_NAME")
   modo=$(printf 'WHENEVER SQLERROR EXIT 1\nSET HEADING OFF FEEDBACK OFF PAGESIZE 0\n%s\nEXIT\n' "$SONDA" \
-    | docker exec -i "$CONT_NAME" sqlplus -s -L / as sysdba 2> /dev/null | tr -d '[:space:]') || modo=""
+         | docker exec -i "$CONT_NAME" sqlplus -s -L / as sysdba 2> /dev/null | tr -d '[:space:]') || modo=""
   case "$modo" in *ORA-*|*ERROR*) modo="" ;; esac
-  echo " t=${t}s docker=$salud cdb/pdb=${modo:-no-disponible}"
+  echo "  t=${t}s  docker=$salud  cdb/pdb=${modo:-no-disponible}"
   if [ "$modo" = "READWRITE/READWRITE" ]; then exit 0; fi
   sleep 10
 done
-echo "La base no está lista tras ${MAX}s"
+echo "AVISO: la base no quedó abierta en ${MAX}s. Revisa: docker logs --tail 50 $CONT_NAME" >&2
 exit 1
