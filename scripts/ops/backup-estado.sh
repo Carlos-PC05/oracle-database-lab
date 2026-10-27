@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # scripts/ops/backup-estado.sh — copia en frío y consistente del estado del laboratorio.
 # Copia el volumen completo y, si los hay, los archivos de la base que viven FUERA del volumen.
-# Uso: bash scripts/ops/backup-estado.sh <etiqueta-en-kebab-case>	(p. ej.: lab3-final)
+# Uso: bash scripts/ops/backup-estado.sh <etiqueta-en-kebab-case>     (p. ej.: lab3-final)
 set -euo pipefail
 source scripts/deployment/env/00-config.sh
+docker info > /dev/null 2>&1 || { echo "ERROR: Docker no responde (¿está arrancado Docker Desktop o el servicio docker?). No se ha tocado nada." >&2; exit 1; }
 
 ETIQUETA="${1:?Uso: backup-estado.sh <etiqueta, p. ej. lab3-final>}"
 [[ "$ETIQUETA" =~ ^[a-z0-9][a-z0-9-]*$ ]] || { echo "La etiqueta debe ir en kebab-case (p. ej. lab3-final)"; exit 2; }
@@ -30,9 +31,9 @@ echo "== 3. Cobertura: ¿está todo dentro de $DATA_ROOT (el volumen)? =="
 grep '^FILE|' "$DEST/inventario.txt" | cut -d'|' -f3 | sort -u | while read -r f; do
   real=$(docker exec "$CONT_NAME" readlink -f "$f")
   if [[ "$real" == "$DATA_ROOT"/* ]]; then
-    echo " dentro $f"
+    echo "  dentro  $f"
   else
-    echo " FUERA	$f"
+    echo "  FUERA   $f"
     echo "$real" >> "$DEST/extras.lst"
   fi
 done
@@ -45,7 +46,7 @@ echo "SHUTDOWN IMMEDIATE" | docker exec -i "$CONT_NAME" sqlplus -s -L / as sysdb
 docker stop -t 120 "$CONT_NAME" > /dev/null
 
 echo "== 5. Copia del volumen (tar + gzip, conservando dueños y permisos) =="
-docker run --rm --user 0:0 -v "$VOL_NAME":/origen:ro -v "$DEST":/destino "$HELPER_IMG" \
+docker run --rm -v "$VOL_NAME":/origen:ro -v "$DEST":/destino "$HELPER_IMG" \
   sh -c "tar --numeric-owner -czpf /destino/volumen.tar.gz -C /origen . && chown $DUENO /destino/volumen.tar.gz"
 
 echo "== 6. Archivos fuera del volumen =="
@@ -55,9 +56,9 @@ while read -r f; do
   n=$((n + 1))
   docker cp "$CONT_NAME:$f" - | gzip > "$DEST/extras/extra_$n.tar.gz"
   echo "extra_$n.tar.gz|$f" >> "$DEST/extras/mapa.txt"
-  echo " copiado $f"
+  echo "  copiado $f"
 done < "$DEST/extras.lst"
-[ "$n" -eq 0 ] && echo " ninguno: el volumen contiene toda la base de datos"
+[ "$n" -eq 0 ] && echo "  ninguno: el volumen contiene toda la base de datos"
 
 echo "== 7. Manifiesto y sumas SHA-256 =="
 {
