@@ -1,0 +1,7 @@
+SELECT dni FROM tiendasur.cliente WHERE id_cliente = 4711
+       *
+ERROR at line 1:
+ORA-00904: "DNI": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/
+
+
